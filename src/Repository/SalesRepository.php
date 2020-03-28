@@ -39,7 +39,7 @@ class SalesRepository
                 count($annualSales),
                 count($grouppedCodes['anual']),
                 count($monthlySales),
-                $grouppedCodes['mensal']
+                count($grouppedCodes['mensal']),
             );
         }
 

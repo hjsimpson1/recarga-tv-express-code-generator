@@ -2,8 +2,6 @@
 
 namespace CViniciusSDias\RecargaTvExpress\Exception;
 
-use Throwable;
-
 class NotEnoughCodesException extends \Exception
 {
     public function __construct(

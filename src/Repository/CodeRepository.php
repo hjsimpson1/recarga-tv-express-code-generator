@@ -46,7 +46,10 @@ class CodeRepository
         $stmt->execute();
 
         $grouppedCodes = $stmt->fetchAll(\PDO::FETCH_GROUP);
-        $grouppedSerialCodes = [];
+        $grouppedSerialCodes = [
+            'anual' => [],
+            'mensal' => [],
+        ];
         foreach ($grouppedCodes as $product => $codes) {
             $grouppedSerialCodes[$product] = array_map(function (array $code) {
                 return new Code($code['id'], $code['serial']);
