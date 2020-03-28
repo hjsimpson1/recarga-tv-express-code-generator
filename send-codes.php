@@ -3,7 +3,7 @@
 require_once __DIR__ . '/bootstrap.php';
 
 use CViniciusSDias\RecargaTvExpress\Exception\CodeNotFoundException;
-use CViniciusSDias\RecargaTvExpress\Service\SalesRepository;
+use CViniciusSDias\RecargaTvExpress\Repository\SalesRepository;
 use CViniciusSDias\RecargaTvExpress\Service\SerialCodeSender;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;

@@ -1,10 +1,10 @@
 <?php
 
-namespace CViniciusSDias\RecargaTvExpress\Service;
+namespace CViniciusSDias\RecargaTvExpress\Repository;
 
 use CViniciusSDias\RecargaTvExpress\Model\Code;
 use CViniciusSDias\RecargaTvExpress\Model\Sale;
-use CViniciusSDias\RecargaTvExpress\Repository\CodeRepository;
+use CViniciusSDias\RecargaTvExpress\Service\EmailSalesReader;
 
 class SalesRepository
 {
@@ -53,24 +53,15 @@ class SalesRepository
      */
     private function attachCodesToSales(array $grouppedCodes, array $annualSales, array $monthlySales): void
     {
-        foreach ($grouppedCodes['anual'] as $annualCodes) {
-            $this->attachCodes($annualCodes, $annualSales);
+        foreach ($grouppedCodes['anual'] as $i => $code) {
+            $annualSales[$i]->attachCode($code);
+            $this->codeRepository->attachCodeToSale($code, $annualSales[$i]);
         }
 
-        foreach ($grouppedCodes['mensal'] as $monthlyCodes) {
-            $this->attachCodes($monthlyCodes, $monthlySales);
-        }
-    }
 
-    /**
-     * @param Code[] $codes
-     * @param Sale[] $sales
-     */
-    private function attachCodes($codes, array $sales)
-    {
-        foreach ($codes as $i => $code) {
-            $sales[$i]->attachCode($code);
-            $this->codeRepository->attachCodeToSale($code, $sales[$i]);
+        foreach ($grouppedCodes['mensal'] as $i => $code) {
+            $monthlySales[$i]->attachCode($code);
+            $this->codeRepository->attachCodeToSale($code, $monthlySales[$i]);
         }
     }
 }
