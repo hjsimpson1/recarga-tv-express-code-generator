@@ -16,11 +16,12 @@ use PHPUnit\Framework\TestCase;
  */
 class SalesFinderTest extends TestCase
 {
-    public function testSearchingEmailsWithoutAvailableParserMustReturnEmptySales()
+    public function testSalesFinderShouldReturnEmptyArrayWhenNoParseableEmailIsFound()
     {
         $incomingMail = $this->createStub(IncomingMail::class);
         $incomingMail->fromAddress = 'info@mercadopago.com';
-        $incomingMail->subject = 'Você recebeu um pagamento por Combo MFC + TVE anual';
+        $invalidEmailSubject = 'Você recebeu um pagamento por Combo MFC + TVE anual';
+        $incomingMail->subject = $invalidEmailSubject;
 
         $mailbox = $this->createStub(Mailbox::class);
         $mailbox->method('searchMailbox')->willReturn([1]);
