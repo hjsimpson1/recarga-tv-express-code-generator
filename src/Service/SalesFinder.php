@@ -10,7 +10,6 @@ class SalesFinder
     private $mailbox;
     /** @var int[] */
     private $mailIds;
-    /** @var EmailParser */
     private $emailParser;
 
     public function __construct(Mailbox $mailbox, EmailParser $emailParser)

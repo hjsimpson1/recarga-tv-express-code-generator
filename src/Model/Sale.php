@@ -18,6 +18,16 @@ class Sale
     public function __construct(Email $costumerEmail, string $product)
     {
         $this->costumerEmail = $costumerEmail;
-        $this->product = trim($product);
+        $this->setProduct($product);
+    }
+
+    private function setProduct(string $product): void
+    {
+        $productName = trim($product);
+        if (!in_array($productName, ['anual', 'mensal'])) {
+            throw new \DomainException("$productName is not a valid product");
+        }
+
+        $this->product = $productName;
     }
 }
