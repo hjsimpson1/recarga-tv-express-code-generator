@@ -7,6 +7,7 @@ use CViniciusSDias\RecargaTvExpress\Model\VO\Email;
 /**
  * @property-read Email $costumerEmail
  * @property-read string $product
+ * @property-read Code $code
  */
 class Sale
 {
@@ -14,6 +15,7 @@ class Sale
 
     private $costumerEmail;
     private $product;
+    private $code;
 
     public function __construct(Email $costumerEmail, string $product)
     {
@@ -29,5 +31,10 @@ class Sale
         }
 
         $this->product = $productName;
+    }
+
+    public function attachCode(Code $code)
+    {
+        $this->code = $code;
     }
 }

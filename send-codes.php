@@ -12,12 +12,12 @@ use Psr\Log\LoggerInterface;
 $container = require_once __DIR__ . '/config/dependencies.php';
 
 try {
-    /** @var SalesFinder $emailsFinder */
-    $emailsFinder = $container->get(SalesFinder::class);
+    /** @var SalesFinder $salesFinder */
+    $salesFinder = $container->get(SalesFinder::class);
     /** @var SerialCodeSender $codeSender */
     $codeSender = $container->get(SerialCodeSender::class);
 
-    $sales = $emailsFinder->findSales();
+    $sales = $salesFinder->findSales();
 
     foreach ($sales as $sale) {
         $codeSender->sendCodeTo($sale);

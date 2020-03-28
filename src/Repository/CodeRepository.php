@@ -49,4 +49,26 @@ class CodeRepository
 
         return $stm->fetchAll(PDO::FETCH_KEY_PAIR);
     }
+
+    public function findUnusedCodes(int $numberOfAnnualSales, int $numberOfMonthlySales)
+    {
+        $stmt = $this->con->prepare("
+        SELECT * FROM (SELECT product, id, serial FROM serial_codes WHERE user_email IS NULL AND product = 'anual' LIMIT :annual)
+        UNION
+        SELECT * FROM (SELECT product, id, serial FROM serial_codes WHERE user_email IS NULL AND product = 'mensal' LIMIT :monthly);
+        ");
+        $stmt->bindValue(':annual', $numberOfAnnualSales);
+        $stmt->bindValue(':monthly', $numberOfMonthlySales);
+        $stmt->execute();
+
+        $grouppedCodes = $stmt->fetchAll(\PDO::FETCH_GROUP);
+        $grouppedSerialCodes = [];
+        foreach ($grouppedCodes as $product => $codes) {
+            $grouppedSerialCodes[$product] = array_map(function (array $code) {
+                return new Code($code['id'], $code['serial']);
+            }, $codes);
+        }
+
+        return $grouppedSerialCodes;
+    }
 }

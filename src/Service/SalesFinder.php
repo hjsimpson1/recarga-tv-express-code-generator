@@ -2,41 +2,75 @@
 
 namespace CViniciusSDias\RecargaTvExpress\Service;
 
+use CViniciusSDias\RecargaTvExpress\Model\Code;
 use CViniciusSDias\RecargaTvExpress\Model\Sale;
-use CViniciusSDias\RecargaTvExpress\Service\EmailParser\EmailParser;
-use PhpImap\Mailbox;
+use CViniciusSDias\RecargaTvExpress\Repository\CodeRepository;
 
 class SalesFinder
 {
-    private $mailbox;
-    /** @var int[] */
-    private $mailIds;
-    private $emailParser;
+    private $emailSalesReader;
+    private $codeRepository;
+    private $con;
 
-    public function __construct(Mailbox $mailbox, EmailParser $emailParser)
+    public function __construct(EmailSalesReader $emailSalesReader, CodeRepository $codeRepository, \PDO $con)
     {
-        $this->mailbox = $mailbox;
-        $this->mailIds = [];
-        $this->emailParser = $emailParser;
+        $this->emailSalesReader = $emailSalesReader;
+        $this->codeRepository = $codeRepository;
+        $this->con = $con;
     }
 
-    /** @return Sale[] */
+    /**
+     * @return Sale[]
+     * @throws \Throwable
+     */
     public function findSales(): array
     {
-        $this->mailIds = $this->mailbox
-            ->searchMailbox('UNSEEN');
+        $salesWithoutCode = $this->emailSalesReader->findSales();
+        $annualSales = array_values(array_filter($salesWithoutCode, function (Sale $sale) {
+            return $sale->product === 'anual';
+        }));
+        $monthlySales = array_values(array_filter($salesWithoutCode, function (Sale $sale) {
+            return $sale->product === 'mensal';
+        }));
+        $grouppedCodes = $this->codeRepository->findUnusedCodes(count($annualSales), count($monthlySales));
 
-        if (empty($this->mailIds)) {
-            return [];
+        $this->con->beginTransaction();
+        try {
+            $this->attachCodesToSales($grouppedCodes, $annualSales, $monthlySales);
+            $this->con->commit();
+        } catch (\Throwable $e) {
+            $this->con->rollBack();
+            throw $e;
         }
 
-        $sales = [];
-        foreach ($this->mailIds as $mailId) {
-            $mail = $this->mailbox->getMail($mailId);
+        return array_merge($annualSales, $monthlySales);
+    }
 
-            $sales[] = $this->emailParser->parse($mail);
+    /**
+     * @param array $grouppedCodes
+     * @param Sale[] $annualSales
+     * @param Sale[] $monthlySales
+     */
+    private function attachCodesToSales(array $grouppedCodes, array $annualSales, array $monthlySales): void
+    {
+        foreach ($grouppedCodes['anual'] as $annualCodes) {
+            $this->attachCodes($annualCodes, $annualSales);
         }
 
-        return array_filter($sales);
+        foreach ($grouppedCodes['mensal'] as $monthlyCodes) {
+            $this->attachCodes($monthlyCodes, $monthlySales);
+        }
+    }
+
+    /**
+     * @param Code[] $codes
+     * @param Sale[] $sales
+     */
+    private function attachCodes($codes, array $sales)
+    {
+        foreach ($codes as $i => $code) {
+            $sales[$i]->attachCode($code);
+            $this->codeRepository->attachUserToCode($code, $sales[$i]->costumerEmail);
+        }
     }
 }
