@@ -1,6 +1,6 @@
 <?php
 
-use CViniciusSDias\RecargaTvExpress\Service\{EmailParser, MercadoPagoEmailParser, PayPalEmailParser};
+use CViniciusSDias\RecargaTvExpress\Service\EmailParser\{EmailParser, MercadoPagoEmailParser, PayPalEmailParser};
 use CViniciusSDias\RecargaTvExpress\Service\SerialCodeGenerator;
 use CViniciusSDias\RecargaTvExpress\Service\SerialCodeSender;
 use DI\ContainerBuilder;

@@ -3,7 +3,7 @@
 namespace CViniciusSDias\RecargaTvExpress\Tests\Unit\Service;
 
 use CViniciusSDias\RecargaTvExpress\Model\Sale;
-use CViniciusSDias\RecargaTvExpress\Service\PayPalEmailParser;
+use CViniciusSDias\RecargaTvExpress\Service\EmailParser\PayPalEmailParser;
 use PhpImap\IncomingMail;
 use PHPUnit\Framework\TestCase;
 

@@ -3,6 +3,7 @@
 namespace CViniciusSDias\RecargaTvExpress\Service;
 
 use CViniciusSDias\RecargaTvExpress\Model\Sale;
+use CViniciusSDias\RecargaTvExpress\Service\EmailParser\EmailParser;
 use PhpImap\Mailbox;
 
 class SalesFinder

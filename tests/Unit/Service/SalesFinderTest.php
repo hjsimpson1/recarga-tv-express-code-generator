@@ -2,7 +2,7 @@
 
 namespace CViniciusSDias\RecargaTvExpress\Tests\Service;
 
-use CViniciusSDias\RecargaTvExpress\Service\EmailParser;
+use CViniciusSDias\RecargaTvExpress\Service\EmailParser\EmailParser;
 use CViniciusSDias\RecargaTvExpress\Service\SalesFinder;
 use PhpImap\Mailbox;
 use PHPUnit\Framework\TestCase;
@@ -16,6 +16,7 @@ class SalesFinderTest extends TestCase
         $mailbox->method('searchMailbox')
             ->willReturn([]);
 
+        /** @var EmailParser $nullParser */
         $nullParser = $this->createStub(EmailParser::class);
         $salesFinder = new SalesFinder($mailbox, $nullParser);
         $sales = $salesFinder->findSales();

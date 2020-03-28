@@ -3,9 +3,7 @@
 namespace CViniciusSDias\RecargaTvExpress\Tests\Integration\Service;
 
 use CViniciusSDias\RecargaTvExpress\Model\Sale;
-use CViniciusSDias\RecargaTvExpress\Service\EmailParser;
-use CViniciusSDias\RecargaTvExpress\Service\MercadoPagoEmailParser;
-use CViniciusSDias\RecargaTvExpress\Service\PayPalEmailParser;
+use CViniciusSDias\RecargaTvExpress\Service\EmailParser\{EmailParser, MercadoPagoEmailParser, PayPalEmailParser};
 use CViniciusSDias\RecargaTvExpress\Service\SalesFinder;
 use PhpImap\IncomingMail;
 use PhpImap\Mailbox;
