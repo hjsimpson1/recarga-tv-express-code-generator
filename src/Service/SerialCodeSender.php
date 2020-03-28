@@ -31,12 +31,11 @@ class SerialCodeSender
 
     public function sendCodeTo(Sale $sale): void
     {
-        $code = $this->codeGenerator->generateSerialCode($sale);
         $emailBody = <<<EMAIL
         Olá!
         Obrigado pela compra
         Segue abaixo seu codigo de recarga:
-        $code
+        {$sale->code}
         
         Dúvidas de como recarregar acesse o site https://www.recargatvexpress.com/como-recarregar
         EMAIL;

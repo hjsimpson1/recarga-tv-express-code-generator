@@ -6,7 +6,7 @@ use CViniciusSDias\RecargaTvExpress\Model\Sale;
 use CViniciusSDias\RecargaTvExpress\Service\EmailParser\EmailParser;
 use PhpImap\Mailbox;
 
-class SalesFinder
+class EmailSalesReader
 {
     private $mailbox;
     /** @var int[] */
@@ -38,5 +38,12 @@ class SalesFinder
         }
 
         return array_filter($sales);
+    }
+
+    public function markEmailsAsUnread()
+    {
+        foreach ($this->mailIds as $mailId) {
+            $this->mailbox->markMailAsUnread($mailId);
+        }
     }
 }

@@ -4,7 +4,7 @@ namespace CViniciusSDias\RecargaTvExpress\Tests\Integration\Service;
 
 use CViniciusSDias\RecargaTvExpress\Model\Sale;
 use CViniciusSDias\RecargaTvExpress\Service\EmailParser\{EmailParser, MercadoPagoEmailParser, PayPalEmailParser};
-use CViniciusSDias\RecargaTvExpress\Service\SalesFinder;
+use CViniciusSDias\RecargaTvExpress\Service\EmailSalesReader;
 use PhpImap\IncomingMail;
 use PhpImap\Mailbox;
 use PHPUnit\Framework\TestCase;
@@ -25,7 +25,7 @@ class SalesFinderTest extends TestCase
         $mailbox->method('searchMailbox')->willReturn([1]);
         $mailbox->method('getMail')->willReturn($incomingMail);
 
-        $salesFinder = new SalesFinder($mailbox, $this->emailParser());
+        $salesFinder = new EmailSalesReader($mailbox, $this->emailParser());
 
         $sales = $salesFinder->findSales();
 
@@ -63,7 +63,7 @@ class SalesFinderTest extends TestCase
             $incomingMailMock3,
         );
 
-        $salesFinder = new SalesFinder($mailbox, $this->emailParser());
+        $salesFinder = new EmailSalesReader($mailbox, $this->emailParser());
 
         // act
         $sales = $salesFinder->findSales();
