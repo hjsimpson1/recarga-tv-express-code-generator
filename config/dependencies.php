@@ -1,17 +1,16 @@
 <?php
 
 use CViniciusSDias\RecargaTvExpress\Service\EmailParser\{EmailParser, MercadoPagoEmailParser, PayPalEmailParser};
-use CViniciusSDias\RecargaTvExpress\Service\SerialCodeGenerator;
 use CViniciusSDias\RecargaTvExpress\Service\SerialCodeSender;
 use DI\ContainerBuilder;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\TelegramBotHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Mailer\Bridge\Google\Transport\GmailSmtpTransport;
 use function DI\{factory, get, env, create};
 use PhpImap\Mailbox;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Mailer\Bridge\Google\Smtp\GmailTransport;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\MailerInterface;
 
@@ -37,12 +36,12 @@ $builder->addDefinitions([
     Mailbox::class => create()
         ->constructor(get('imapPath'), get('imapLogin'), get('imapPassword'))
         ->method('setAttachmentsIgnore', true),
-    GmailTransport::class => create()
+    GmailSmtpTransport::class => create()
         ->constructor(get('imapLogin'), get('imapPassword')),
-    Mailer::class => create(Mailer::class)->constructor(get(GmailTransport::class)),
+    Mailer::class => create(Mailer::class)->constructor(get(GmailSmtpTransport::class)),
     MailerInterface::class => get(Mailer::class),
     SerialCodeSender::class => create()
-        ->constructor(get(MailerInterface::class), get(SerialCodeGenerator::class), get('imapLogin')),
+        ->constructor(get(MailerInterface::class), get('imapLogin')),
     EmailParser::class => factory(function (ContainerInterface $c) {
         $nullParser = new class extends EmailParser
         {

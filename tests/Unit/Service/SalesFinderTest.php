@@ -1,6 +1,6 @@
 <?php
 
-namespace CViniciusSDias\RecargaTvExpress\Tests\Service;
+namespace CViniciusSDias\RecargaTvExpress\Tests\Unit\Service;
 
 use CViniciusSDias\RecargaTvExpress\Service\EmailParser\EmailParser;
 use CViniciusSDias\RecargaTvExpress\Service\EmailSalesReader;

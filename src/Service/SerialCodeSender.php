@@ -14,18 +14,13 @@ class SerialCodeSender
      */
     private $mailer;
     /**
-     * @var SerialCodeGenerator
-     */
-    private $codeGenerator;
-    /**
      * @var string
      */
     private $from;
 
-    public function __construct(MailerInterface $mailer, SerialCodeGenerator $codeGenerator, string $from)
+    public function __construct(MailerInterface $mailer, string $from)
     {
         $this->mailer = $mailer;
-        $this->codeGenerator = $codeGenerator;
         $this->from = $from;
     }
 
