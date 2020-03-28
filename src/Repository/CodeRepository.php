@@ -32,11 +32,12 @@ class CodeRepository
         return new Code(...$serialCode);
     }
 
-    public function attachUserToCode(Code $serialCode, Email $userEmail): bool
+    public function attachCodeToSale(Code $serialCode, Sale $sale): bool
     {
+        $costumerEmail = $sale->costumerEmail;
         $sql = 'UPDATE serial_codes SET user_email = ? WHERE id = ?;';
         $stm = $this->con->prepare($sql);
-        $stm->bindValue(1, $userEmail);
+        $stm->bindValue(1, $costumerEmail);
         $stm->bindValue(2, $serialCode->id, PDO::PARAM_INT);
 
         return $stm->execute();

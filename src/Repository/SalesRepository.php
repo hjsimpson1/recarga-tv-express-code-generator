@@ -6,7 +6,7 @@ use CViniciusSDias\RecargaTvExpress\Model\Code;
 use CViniciusSDias\RecargaTvExpress\Model\Sale;
 use CViniciusSDias\RecargaTvExpress\Repository\CodeRepository;
 
-class SalesFinder
+class SalesRepository
 {
     private $emailSalesReader;
     private $codeRepository;
@@ -23,7 +23,7 @@ class SalesFinder
      * @return Sale[]
      * @throws \Throwable
      */
-    public function findSales(): array
+    public function salesWithCodes(): array
     {
         $salesWithoutCode = $this->emailSalesReader->findSales();
         $annualSales = array_values(array_filter($salesWithoutCode, function (Sale $sale) {
@@ -70,7 +70,7 @@ class SalesFinder
     {
         foreach ($codes as $i => $code) {
             $sales[$i]->attachCode($code);
-            $this->codeRepository->attachUserToCode($code, $sales[$i]->costumerEmail);
+            $this->codeRepository->attachCodeToSale($code, $sales[$i]);
         }
     }
 }
