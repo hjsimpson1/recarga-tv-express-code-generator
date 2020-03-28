@@ -2,7 +2,6 @@
 
 require_once __DIR__ . '/bootstrap.php';
 
-use CViniciusSDias\RecargaTvExpress\Exception\CodeNotFoundException;
 use CViniciusSDias\RecargaTvExpress\Exception\NotEnoughCodesException;
 use CViniciusSDias\RecargaTvExpress\Repository\SalesRepository;
 use CViniciusSDias\RecargaTvExpress\Service\EmailSalesReader;
