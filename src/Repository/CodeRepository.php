@@ -2,10 +2,8 @@
 
 namespace CViniciusSDias\RecargaTvExpress\Repository;
 
-use CViniciusSDias\RecargaTvExpress\Exception\CodeNotFoundException;
 use CViniciusSDias\RecargaTvExpress\Model\Code;
 use CViniciusSDias\RecargaTvExpress\Model\Sale;
-use CViniciusSDias\RecargaTvExpress\Model\VO\Email;
 use PDO;
 
 class CodeRepository
@@ -15,21 +13,6 @@ class CodeRepository
     public function __construct(PDO $con)
     {
         $this->con = $con;
-    }
-
-    public function findUnusedCodeFor(Sale $sale): Code
-    {
-        $sql = 'SELECT id, serial FROM serial_codes WHERE user_email IS NULL AND product = ? LIMIT 1;';
-        $stm = $this->con->prepare($sql);
-        $stm->bindValue(1, $sale->product);
-        $stm->execute();
-
-        $serialCode = $stm->fetch(PDO::FETCH_NUM);
-        if (false === $serialCode) {
-            throw new CodeNotFoundException('No unused code found for this sale', $sale);
-        }
-
-        return new Code(...$serialCode);
     }
 
     public function attachCodeToSale(Code $serialCode, Sale $sale): bool

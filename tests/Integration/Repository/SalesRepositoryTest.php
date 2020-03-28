@@ -68,14 +68,14 @@ class SalesRepositoryTest extends TestCase
 
     public function testFailureOnExecuteQueryMustRollbackTransactionAndThrowException()
     {
-        $exception = new \RuntimeException();
-        $this->expectException(\RuntimeException::class);
+        $exception = new \PDOException();
+        $this->expectException(\PDOException::class);
 
         $emailSalesReader = $this->createEmailSalesReader();
         $codeRepository = $this->createCodeRepository();
         $codeRepository
             ->method('attachCodeToSale')
-            ->willThrowException(new \RuntimeException());
+            ->willThrowException(new \PDOException());
         $con = $this->createStub(\PDO::class);
         $con->method('exec')->willThrowException($exception);
         $salesRepository = new SalesRepository($emailSalesReader, $codeRepository, $con);

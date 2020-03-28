@@ -42,37 +42,6 @@ class CodeRepositoryTest extends TestCase
         self::$con->exec('DELETE FROM serial_codes;');
     }
 
-    public function testShouldFindOneUnusedCodeForASale()
-    {
-        // Arrange
-        $this->insertCode('4321', 'anual');
-        $this->insertCode('1111', 'anual');
-        $this->insertCode('1234', 'mensal');
-
-        $sale = new Sale(new Email('email@example.com'), 'mensal');
-
-        // Act
-        $code = $this->codeRepository->findUnusedCodeFor($sale);
-
-        // Assert
-        self::assertSame('1234', $code->serial);
-    }
-
-    public function testShouldNotFindAnyUnusedCodeForASaleIfThereAreNone()
-    {
-        // Assert
-        $this->expectExceptionMessage('No unused code found for this sale');
-
-        // Arrange
-        $this->insertCode('4321', 'anual');
-        $this->insertCode('1111', 'anual');
-
-        $sale = new Sale(new Email('email@example.com'), 'mensal');
-
-        // Act
-        $this->codeRepository->findUnusedCodeFor($sale);
-    }
-
     public function testShouldFindExactNumberOfAvailableCodes()
     {
         // Arrange

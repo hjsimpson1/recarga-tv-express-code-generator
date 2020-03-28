@@ -39,4 +39,11 @@ class EmailSalesReader
 
         return array_filter($sales);
     }
+
+    public function markEmailsAsUnread()
+    {
+        foreach ($this->mailIds as $mailId) {
+            $this->mailbox->markMailAsUnread($mailId);
+        }
+    }
 }

@@ -2,7 +2,7 @@
 
 namespace CViniciusSDias\RecargaTvExpress\Repository;
 
-use CViniciusSDias\RecargaTvExpress\Model\Code;
+use CViniciusSDias\RecargaTvExpress\Exception\NotEnoughCodesException;
 use CViniciusSDias\RecargaTvExpress\Model\Sale;
 use CViniciusSDias\RecargaTvExpress\Service\EmailSalesReader;
 
@@ -21,7 +21,8 @@ class SalesRepository
 
     /**
      * @return Sale[]
-     * @throws \Throwable
+     * @throws \PDOException
+     * @throws NotEnoughCodesException
      */
     public function salesWithCodes(): array
     {
@@ -33,12 +34,20 @@ class SalesRepository
             return $sale->product === 'mensal';
         }));
         $grouppedCodes = $this->codeRepository->findUnusedCodes(count($annualSales), count($monthlySales));
+        if (count($annualSales) > count($grouppedCodes['anual']) || count($monthlySales) > $grouppedCodes['mensal']) {
+            throw new NotEnoughCodesException(
+                count($annualSales),
+                count($grouppedCodes['anual']),
+                count($monthlySales),
+                $grouppedCodes['mensal']
+            );
+        }
 
         $this->con->beginTransaction();
         try {
             $this->attachCodesToSales($grouppedCodes, $annualSales, $monthlySales);
             $this->con->commit();
-        } catch (\Throwable $e) {
+        } catch (\PDOException $e) {
             $this->con->rollBack();
             throw $e;
         }
