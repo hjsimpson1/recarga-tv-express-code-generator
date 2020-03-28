@@ -34,7 +34,7 @@ class SalesRepository
             return $sale->product === 'mensal';
         }));
         $grouppedCodes = $this->codeRepository->findUnusedCodes(count($annualSales), count($monthlySales));
-        if (count($annualSales) > count($grouppedCodes['anual']) || count($monthlySales) > $grouppedCodes['mensal']) {
+        if (count($annualSales) > count($grouppedCodes['anual']) || count($monthlySales) > count($grouppedCodes['mensal'])) {
             throw new NotEnoughCodesException(
                 count($annualSales),
                 count($grouppedCodes['anual']),

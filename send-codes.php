@@ -27,14 +27,11 @@ try {
 } catch (NotEnoughCodesException $exception) {
     /** @var LoggerInterface $logger */
     $logger = $container->get(LoggerInterface::class);
-    $context = [
-        'mensagem' => $exception->getMessage(),
-    ];
     /** @var EmailSalesReader $emailReader */
     $emailReader = $container->get(EmailSalesReader::class);
     $emailReader->markEmailsAsUnread();
 
-    $logger->error('Erro ao enviar códigos.', $context);
+    $logger->error('Erro ao enviar códigos: ' . $exception->getMessage(), $context);
 } catch (\Throwable $error) {
     /** @var LoggerInterface $logger */
     $logger = $container->get(LoggerInterface::class);

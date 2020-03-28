@@ -2,6 +2,7 @@
 
 namespace CViniciusSDias\RecargaTvExpress\Tests\Integration\Repository;
 
+use CViniciusSDias\RecargaTvExpress\Exception\NotEnoughCodesException;
 use CViniciusSDias\RecargaTvExpress\Model\Code;
 use CViniciusSDias\RecargaTvExpress\Model\Sale;
 use CViniciusSDias\RecargaTvExpress\Model\VO\Email;
@@ -68,7 +69,6 @@ class SalesRepositoryTest extends TestCase
 
     public function testFailureOnExecuteQueryMustRollbackTransactionAndThrowException()
     {
-        $exception = new \PDOException();
         $this->expectException(\PDOException::class);
 
         $emailSalesReader = $this->createEmailSalesReader();
@@ -77,7 +77,34 @@ class SalesRepositoryTest extends TestCase
             ->method('attachCodeToSale')
             ->willThrowException(new \PDOException());
         $con = $this->createStub(\PDO::class);
-        $con->method('exec')->willThrowException($exception);
+        $salesRepository = new SalesRepository($emailSalesReader, $codeRepository, $con);
+
+        $salesRepository->salesWithCodes();
+    }
+
+    public function testWhenNotEnoughCodesAreFoundAnExceptionMustBeThrown()
+    {
+        $this->expectException(NotEnoughCodesException::class);
+        $exceptionMessage = <<<MSG
+        You don't have enough codes for all your sales.
+        Number of annual sales: 2. Number of annual codes available: 2.
+        Number of monthly sales: 2. Number of monthly codes available: 1.
+        MSG;
+        $this->expectExceptionMessage($exceptionMessage);
+
+        $emailSalesReader = $this->createEmailSalesReader();
+        $codeRepository = $this->createStub(CodeRepository::class);
+        $codeRepository->method('findUnusedCodes')
+            ->willReturn([
+                'anual' => [
+                    new Code(1, '1111', new Email('email@example.com')),
+                    new Code(2, '2222', new Email('email@example.com')),
+                ],
+                'mensal' => [
+                    new Code(3, '3333', new Email('email@example.com')),
+                ],
+            ]);
+        $con = $this->createStub(\PDO::class);
         $salesRepository = new SalesRepository($emailSalesReader, $codeRepository, $con);
 
         $salesRepository->salesWithCodes();
