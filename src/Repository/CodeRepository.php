@@ -37,9 +37,9 @@ class CodeRepository
     public function findUnusedCodes(int $numberOfAnnualSales, int $numberOfMonthlySales)
     {
         $stmt = $this->con->prepare("
-        SELECT * FROM (SELECT product, id, serial FROM serial_codes WHERE user_email IS NULL AND product = 'anual' LIMIT :annual)
+        SELECT * FROM (SELECT product, id, serial FROM serial_codes WHERE user_email IS NULL AND product = 'anual' LIMIT :annual) AS anual
         UNION
-        SELECT * FROM (SELECT product, id, serial FROM serial_codes WHERE user_email IS NULL AND product = 'mensal' LIMIT :monthly);
+        SELECT * FROM (SELECT product, id, serial FROM serial_codes WHERE user_email IS NULL AND product = 'mensal' LIMIT :monthly) AS mensal;
         ");
         $stmt->bindValue(':annual', $numberOfAnnualSales);
         $stmt->bindValue(':monthly', $numberOfMonthlySales);
