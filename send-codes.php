@@ -30,7 +30,7 @@ try {
     $emailReader = $container->get(EmailSalesReader::class);
     $emailReader->markEmailsAsUnread();
 
-    $logger->error('Erro ao enviar códigos: ' . $exception->getMessage(), $context);
+    $logger->error('Erro ao enviar códigos: ' . $exception->getMessage());
 } catch (\Throwable $error) {
     /** @var LoggerInterface $logger */
     $logger = $container->get(LoggerInterface::class);
