@@ -41,8 +41,8 @@ class CodeRepository
         UNION
         SELECT * FROM (SELECT product, id, serial FROM serial_codes WHERE user_email IS NULL AND product = 'mensal' LIMIT :monthly) AS mensal;
         ");
-        $stmt->bindValue(':annual', $numberOfAnnualSales);
-        $stmt->bindValue(':monthly', $numberOfMonthlySales);
+        $stmt->bindValue(':annual', $numberOfAnnualSales, PDO::PARAM_INT);
+        $stmt->bindValue(':monthly', $numberOfMonthlySales, PDO::PARAM_INT);
         $stmt->execute();
 
         $grouppedCodes = $stmt->fetchAll(\PDO::FETCH_GROUP);
