@@ -13,7 +13,7 @@ class MercadoPagoEmailParserTest extends TestCase
      * @dataProvider emails
      * @param string $emailBody
      */
-    public function testShouldParseCorrectlyASaleFromMercadoPagoEmail(string $emailBody)
+    public function testShouldParseCorrectlyMonthlySalesFromMercadoPagoEmail(string $emailBody)
     {
         // arrange
         $parser = new MercadoPagoEmailParser();
@@ -25,7 +25,7 @@ class MercadoPagoEmailParserTest extends TestCase
             ->willReturn($emailBody);
 
         $incomingMailMock2 = clone $incomingMailMock;
-        $incomingMailMock2->subject = ' Você recebeu um pagamento por P 2     ';
+        $incomingMailMock2->subject = ' Você recebeu um pagamento por P4     ';
 
         // act
         $sale1 = $parser->parse($incomingMailMock);
@@ -34,11 +34,39 @@ class MercadoPagoEmailParserTest extends TestCase
         // assert
         $this->assertInstanceOf(Sale::class, $sale1);
         $this->assertSame('mensal', $sale1->product);
+        $this->assertSame('mensal', $sale2->product);
+        $this->assertEquals('email@example.com', $sale1->costumerEmail);
+    }
+    /**
+     * @dataProvider emails
+     * @param string $emailBody
+     */
+    public function testShouldParseCorrectlyAnnualSalesFromMercadoPagoEmail(string $emailBody)
+    {
+        // arrange
+        $parser = new MercadoPagoEmailParser();
+
+        $incomingMailMock = $this->createStub(IncomingMail::class);
+        $incomingMailMock->subject = ' Você recebeu um pagamento por P 2     ';
+        $incomingMailMock->fromAddress = 'info@mercadopago.com';
+        $incomingMailMock->method('__get')
+            ->willReturn($emailBody);
+
+        $incomingMailMock2 = clone $incomingMailMock;
+        $incomingMailMock2->subject = ' Você recebeu um pagamento por P 5     ';
+
+        // act
+        $sale1 = $parser->parse($incomingMailMock);
+        $sale2 = $parser->parse($incomingMailMock2);
+
+        // assert
+        $this->assertInstanceOf(Sale::class, $sale1);
+        $this->assertSame('anual', $sale1->product);
         $this->assertSame('anual', $sale2->product);
         $this->assertEquals('email@example.com', $sale1->costumerEmail);
     }
 
-    public function testShouldRaiseErrorWhenTryingToParseUnsupportedEmail()
+    public function testShouldRaiseAnErrorWhenTryingToParseUnsupportedEmail()
     {
         $this->expectException(\Error::class);
 
