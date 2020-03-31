@@ -1,6 +1,6 @@
 <?php
 
-namespace CViniciusSDias\RecargaTvExpress\Tests\Integration\Repository;
+namespace CViniciusSDias\RecargaTvExpress\Tests\Unit\Repository;
 
 use CViniciusSDias\RecargaTvExpress\Exception\NotEnoughCodesException;
 use CViniciusSDias\RecargaTvExpress\Model\Code;
@@ -31,6 +31,14 @@ class SalesRepositoryTest extends TestCase
         foreach ($sales as $sale) {
             self::assertInstanceOf(Code::class, $sale->code);
         }
+        self::assertSame('anual', $sales[0]->product);
+        self::assertSame('1111', $sales[0]->code->serial);
+        self::assertSame('anual', $sales[1]->product);
+        self::assertSame('2222', $sales[1]->code->serial);
+        self::assertSame('mensal', $sales[2]->product);
+        self::assertSame('3333', $sales[2]->code->serial);
+        self::assertSame('mensal', $sales[3]->product);
+        self::assertSame('4444', $sales[3]->code->serial);
     }
 
     private function createEmailSalesReader(): EmailSalesReader
@@ -48,7 +56,7 @@ class SalesRepositoryTest extends TestCase
         return $emailSalesReader;
     }
 
-    private function createCodeRepository()
+    private function createCodeRepository(): CodeRepository
     {
         $codeRepository = $this->createStub(CodeRepository::class);
         $codeRepository->method('findUnusedCodes')
@@ -65,7 +73,6 @@ class SalesRepositoryTest extends TestCase
 
         return $codeRepository;
     }
-
 
     public function testFailureOnExecuteQueryMustRollbackTransactionAndThrowException()
     {

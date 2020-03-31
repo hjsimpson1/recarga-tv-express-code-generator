@@ -57,7 +57,7 @@ class CodeRepositoryTest extends TestCase
         self::assertEquals(3, $numberOfAvailableCodes['mensal']);
     }
 
-    public function testShouldNotFindAnyAvailableCodesIfThereAreNone()
+    public function testNumberOfAvailableCodesMustBeZeroForBothProductTypesIfTheRepositoryIsEmpty()
     {
         $numberOfAvailableCodes = $this->codeRepository->findNumberOfAvailableCodes();
 
@@ -65,7 +65,7 @@ class CodeRepositoryTest extends TestCase
         self::assertEquals(0, $numberOfAvailableCodes['mensal']);
     }
 
-    public function testSearchForAllSpecificNumberOfCodesShouldReturnGrouppedArray()
+    public function testSearchForSpecificNumberOfCodesShouldReturnGrouppedArray()
     {
         $this->insertCode('1111', 'anual');
         $this->insertCode('2222', 'anual');
@@ -81,6 +81,14 @@ class CodeRepositoryTest extends TestCase
         self::assertSame('2222', $codes['anual'][1]->serial);
         self::assertSame('3333', $codes['mensal'][0]->serial);
         self::assertSame('4444', $codes['mensal'][1]->serial);
+    }
+
+    public function testSearchingForUnusedCodesShouldReturnGrouppedEmptyArraysIfTheRepositoryIsEmpty()
+    {
+        $codes = $this->codeRepository->findUnusedCodes(1, 1);
+
+        self::assertCount(0, $codes['anual']);
+        self::assertCount(0, $codes['mensal']);
     }
 
     private function insertCode(string $serial, string $product)
