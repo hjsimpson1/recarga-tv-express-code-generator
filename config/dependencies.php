@@ -1,6 +1,6 @@
 <?php
 
-use CViniciusSDias\RecargaTvExpress\Service\EmailParser\{EmailParser, MercadoPagoEmailParser, PayPalEmailParser};
+use CViniciusSDias\RecargaTvExpress\Service\EmailParser\{EmailParser, MercadoPagoEmailParser, PayPalEmailParser, WixEmailParser};
 use CViniciusSDias\RecargaTvExpress\Service\SerialCodeSender;
 use DI\ContainerBuilder;
 use Monolog\Handler\StreamHandler;
@@ -55,7 +55,8 @@ $builder->addDefinitions([
                 return true;
             }
         };
-        return new MercadoPagoEmailParser(new PayPalEmailParser($nullParser));
+
+        return new WixEmailParser(new MercadoPagoEmailParser(new PayPalEmailParser($nullParser)));
     }),
     LoggerInterface::class => factory(function (ContainerInterface $container) {
         $logger = new Logger('errors');
