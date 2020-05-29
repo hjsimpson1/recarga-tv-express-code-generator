@@ -48,7 +48,7 @@ class WixEmailParser extends EmailParser
     {
         $productInfo = $infoNodes->item(2)
             ->textContent;
-        preg_match('/produto (mensal|anual)/i', $productInfo, $productMatches);
+        preg_match('/pacote (mensal|anual)/i', $productInfo, $productMatches);
 
         return $productMatches[1];
     }
