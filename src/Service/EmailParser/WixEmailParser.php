@@ -13,7 +13,8 @@ class WixEmailParser extends EmailParser
         return $email->fromAddress === 'no-reply@mystore.wix.com';
     }
 
-    protected function parseEmail(IncomingMail $email): ?Sale
+    /** @return Sale[] */
+    protected function parseEmail(IncomingMail $email): array
     {
         $domDocument = new \DOMDocument();
         libxml_use_internal_errors(true);
@@ -25,8 +26,14 @@ class WixEmailParser extends EmailParser
 
         $emailAddress = $this->retrieveEmailAddress($infoNodes);
         $product = $this->retrieveProduct($infoNodes);
+        $quantity = intval($xPath->query('//td[@class="qty"]')->item(0)->textContent);
+        $sales = [];
 
-        return new Sale(new Email($emailAddress), $product);
+        for ($i = 0; $i < $quantity; $i++) {
+            $sales[] = new Sale(new Email($emailAddress), $product);
+        }
+
+        return $sales;
     }
 
     private function retrieveEmailAddress(\DOMNodeList $infoNodes): string

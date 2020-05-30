@@ -9,6 +9,7 @@ use CViniciusSDias\RecargaTvExpress\Model\VO\Email;
 use CViniciusSDias\RecargaTvExpress\Repository\CodeRepository;
 use CViniciusSDias\RecargaTvExpress\Service\EmailSalesReader;
 use CViniciusSDias\RecargaTvExpress\Repository\SalesRepository;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -21,6 +22,7 @@ class SalesRepositoryTest extends TestCase
     {
         $emailSalesReader = $this->createEmailSalesReader();
         $con = $this->createStub(\PDO::class);
+        /** @var CodeRepository $codeRepository */
         $codeRepository = $this->createCodeRepository();
         $salesRepository = new SalesRepository($emailSalesReader, $codeRepository, $con);
 
@@ -56,7 +58,7 @@ class SalesRepositoryTest extends TestCase
         return $emailSalesReader;
     }
 
-    private function createCodeRepository(): CodeRepository
+    private function createCodeRepository(): Stub
     {
         $codeRepository = $this->createStub(CodeRepository::class);
         $codeRepository->method('findUnusedCodes')
@@ -84,6 +86,7 @@ class SalesRepositoryTest extends TestCase
             ->method('attachCodeToSale')
             ->willThrowException(new \PDOException());
         $con = $this->createStub(\PDO::class);
+        /** @var CodeRepository $codeRepository */
         $salesRepository = new SalesRepository($emailSalesReader, $codeRepository, $con);
 
         $salesRepository->salesWithCodes();

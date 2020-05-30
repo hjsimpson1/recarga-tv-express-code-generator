@@ -33,7 +33,7 @@ class Sale
         $this->product = $productName;
     }
 
-    public function attachCode(Code $code)
+    public function attachCode(Code $code): void
     {
         $this->code = $code;
     }

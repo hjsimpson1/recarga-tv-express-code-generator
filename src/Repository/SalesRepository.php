@@ -3,13 +3,17 @@
 namespace CViniciusSDias\RecargaTvExpress\Repository;
 
 use CViniciusSDias\RecargaTvExpress\Exception\NotEnoughCodesException;
+use CViniciusSDias\RecargaTvExpress\Model\Code;
 use CViniciusSDias\RecargaTvExpress\Model\Sale;
 use CViniciusSDias\RecargaTvExpress\Service\EmailSalesReader;
 
 class SalesRepository
 {
+    /** @var EmailSalesReader */
     private $emailSalesReader;
+    /** @var CodeRepository */
     private $codeRepository;
+    /** @var \PDO */
     private $con;
 
     public function __construct(EmailSalesReader $emailSalesReader, CodeRepository $codeRepository, \PDO $con)
@@ -56,7 +60,7 @@ class SalesRepository
     }
 
     /**
-     * @param array $grouppedCodes
+     * @param array<string, Code[]> $grouppedCodes
      * @param Sale[] $annualSales
      * @param Sale[] $monthlySales
      */

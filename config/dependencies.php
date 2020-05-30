@@ -45,9 +45,9 @@ $builder->addDefinitions([
     EmailParser::class => factory(function (ContainerInterface $c) {
         $nullParser = new class extends EmailParser
         {
-            protected function parseEmail(\PhpImap\IncomingMail $email): ?\CViniciusSDias\RecargaTvExpress\Model\Sale
+            protected function parseEmail(\PhpImap\IncomingMail $email): array
             {
-                return null;
+                return [];
             }
 
             protected function canParse(\PhpImap\IncomingMail $email): bool

@@ -2,13 +2,12 @@
 
 namespace CViniciusSDias\RecargaTvExpress\Tests\Integration\Repository;
 
-use CViniciusSDias\RecargaTvExpress\Model\Sale;
-use CViniciusSDias\RecargaTvExpress\Model\VO\Email;
 use CViniciusSDias\RecargaTvExpress\Repository\CodeRepository;
 use PHPUnit\Framework\TestCase;
 
 class CodeRepositoryTest extends TestCase
 {
+    /** @var \PDO $con */
     private static $con;
     /** @var CodeRepository  */
     private $codeRepository;
@@ -91,7 +90,7 @@ class CodeRepositoryTest extends TestCase
         self::assertCount(0, $codes['mensal']);
     }
 
-    private function insertCode(string $serial, string $product)
+    private function insertCode(string $serial, string $product): void
     {
         /** @var \PDOStatement $stm */
         $stm = self::$con->prepare('INSERT INTO serial_codes (serial, product) VALUES (?, ?)');

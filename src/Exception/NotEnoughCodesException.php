@@ -5,15 +5,12 @@ namespace CViniciusSDias\RecargaTvExpress\Exception;
 class NotEnoughCodesException extends \Exception
 {
     public function __construct(
-        int $numerOfAnnualSales,
-        int $numberOfAnnualCodes,
-        int $numberOfMonthlySales,
-        int $numberOfMonthlyCodes
+        int ...$numberOfSales
     ) {
         $format = "You don't have enough codes for all your sales.\n";
         $format .= "Number of annual sales: %d. Number of annual codes available: %d.\n";
         $format .= "Number of monthly sales: %d. Number of monthly codes available: %d.\n";
-        $message = sprintf($format, ...func_get_args());
+        $message = sprintf($format, ...$numberOfSales);
 
         parent::__construct(
             $message,

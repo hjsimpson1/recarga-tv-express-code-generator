@@ -15,7 +15,8 @@ abstract class EmailParser
         $this->next = $next;
     }
 
-    public function parse(IncomingMail $email): ?Sale
+    /** @return Sale[] */
+    public function parse(IncomingMail $email): array
     {
         if (!$this->canParse($email)) {
             return $this->next->parse($email);
@@ -23,6 +24,7 @@ abstract class EmailParser
 
         return $this->parseEmail($email);
     }
-    abstract protected function parseEmail(IncomingMail $email): ?Sale;
+    /** @return Sale[] */
+    abstract protected function parseEmail(IncomingMail $email): array;
     abstract protected function canParse(IncomingMail $email): bool;
 }

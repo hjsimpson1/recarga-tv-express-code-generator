@@ -3,7 +3,7 @@
 namespace CViniciusSDias\RecargaTvExpress\Tests\Integration\Service;
 
 use CViniciusSDias\RecargaTvExpress\Model\Sale;
-use CViniciusSDias\RecargaTvExpress\Service\EmailParser\{EmailParser, MercadoPagoEmailParser, PayPalEmailParser};
+use CViniciusSDias\RecargaTvExpress\Service\EmailParser\{EmailParser, WixEmailParser};
 use CViniciusSDias\RecargaTvExpress\Service\EmailSalesReader;
 use PhpImap\IncomingMail;
 use PhpImap\Mailbox;
@@ -32,6 +32,9 @@ class SalesFinderTest extends TestCase
         $this->assertEmpty($sales);
     }
 
+    /**
+     * @todo Implement tests for WixEmailParser
+     */
     public function testSalesFinderShouldOnlyReturnSalesFromParseableEmails()
     {
         // arrange
@@ -55,12 +58,28 @@ class SalesFinderTest extends TestCase
         $incomingMailMock3->fromAddress = 'wrong-email@example.com';
         $incomingMailMock3->subject = 'Você recebeu um pagamento por Combo MFC + TVE anual';
 
+        // valid wix e-mail
+        $incomingMailMock4 = $this->createStub(IncomingMail::class);
+        $incomingMailMock4->subject = 'ÓTIMO! VOCÊ ACABOU DE RECEBER UM PEDIDO (#10001)';
+        $incomingMailMock4->fromAddress = 'no-reply@mystore.wix.com';
+        $incomingMailMock4->method('__get')
+            ->willReturn(file_get_contents(__DIR__ . '/../../data/email-from-wix.html'));
+
+        // valid wix e-mail with 2 sales
+        $incomingMailMock5 = $this->createStub(IncomingMail::class);
+        $incomingMailMock5->subject = 'ÓTIMO! VOCÊ ACABOU DE RECEBER UM PEDIDO (#10001)';
+        $incomingMailMock5->fromAddress = 'no-reply@mystore.wix.com';
+        $incomingMailMock5->method('__get')
+            ->willReturn(file_get_contents(__DIR__ . '/../../data/email-from-wix-with-three-sales.html'));
+
         $mailbox = $this->createStub(Mailbox::class);
-        $mailbox->method('searchMailbox')->willReturn([1, 2, 3]);
+        $mailbox->method('searchMailbox')->willReturn([1, 2, 3, 4, 5]);
         $mailbox->method('getMail')->willReturnOnConsecutiveCalls(
             $incomingMailMock1,
             $incomingMailMock2,
             $incomingMailMock3,
+            $incomingMailMock4,
+            $incomingMailMock5,
         );
 
         $salesFinder = new EmailSalesReader($mailbox, $this->emailParser());
@@ -69,21 +88,17 @@ class SalesFinderTest extends TestCase
         $sales = $salesFinder->findSales();
 
         // assert
-        $this->assertCount(2, $sales);
+        $this->assertCount(4, $sales);
         $this->assertContainsOnlyInstancesOf(Sale::class, $sales);
-        $this->assertSame('anual', $sales[0]->product);
-        $this->assertSame('anual', $sales[1]->product);
-        $this->assertEquals('email@example.com', $sales[0]->costumerEmail);
-        $this->assertEquals('email@example.com', $sales[1]->costumerEmail);
     }
 
-    private function emailParser(): MercadoPagoEmailParser
+    private function emailParser(): EmailParser
     {
         $nullParser = new class extends EmailParser
         {
-            protected function parseEmail(IncomingMail $email): ?Sale
+            protected function parseEmail(IncomingMail $email): array
             {
-                return null;
+                return [];
             }
 
             protected function canParse(IncomingMail $email): bool
@@ -92,6 +107,6 @@ class SalesFinderTest extends TestCase
             }
         };
 
-        return new MercadoPagoEmailParser(new PayPalEmailParser($nullParser));
+        return new WixEmailParser($nullParser);
     }
 }

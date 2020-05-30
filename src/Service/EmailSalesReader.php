@@ -8,9 +8,11 @@ use PhpImap\Mailbox;
 
 class EmailSalesReader
 {
+    /** @var Mailbox */
     private $mailbox;
     /** @var int[] */
     private $mailIds;
+    /** @var EmailParser */
     private $emailParser;
 
     public function __construct(Mailbox $mailbox, EmailParser $emailParser)
@@ -34,13 +36,13 @@ class EmailSalesReader
         foreach ($this->mailIds as $mailId) {
             $mail = $this->mailbox->getMail($mailId);
 
-            $sales[] = $this->emailParser->parse($mail);
+            $sales = array_merge($sales, $this->emailParser->parse($mail));
         }
 
-        return array_filter($sales);
+        return $sales;
     }
 
-    public function markEmailsAsUnread()
+    public function markEmailsAsUnread(): void
     {
         foreach ($this->mailIds as $mailId) {
             $this->mailbox->markMailAsUnread($mailId);
